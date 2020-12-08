@@ -1,0 +1,46 @@
+{
+  "name": "hermione-wdio-migrator",
+  "version": "0.0.1",
+  "description": "Plugin for hermione to easily migrate from wdio@4 to wdio@6 without any changes",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "npm run test-unit && npm run lint",
+    "test-unit": "mocha",
+    "release": "standard-version"
+  },
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gemini-testing/hermione-wdio-migrator.git"
+  },
+  "keywords": [
+    "hermione",
+    "plugin",
+    "wdio",
+    "migrator"
+  ],
+  "author": "Dmitriy Dudkevich <dudkevich@yandex-team.ru>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gemini-testing/hermione-wdio-migrator/issues"
+  },
+  "homepage": "https://github.com/gemini-testing/hermione-wdio-migrator#readme",
+  "dependencies": {
+    "gemini-configparser": "^1.0.0"
+  },
+  "devDependencies": {
+    "app-module-path": "^2.2.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "conventional-changelog-lint": "^2.1.1",
+    "eslint": "^6.8.0",
+    "eslint-config-gemini-testing": "^3.0.0",
+    "husky": "^4.3.5",
+    "mocha": "^7.2.0",
+    "sinon": "^9.2.1",
+    "standard-version": "^9.0.0"
+  }
+}
