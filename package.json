@@ -1,6 +1,6 @@
 {
   "name": "hermione-wdio-migrator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Plugin for hermione to easily migrate from wdio@4 to wdio@6 without any changes",
   "main": "lib/index.js",
   "scripts": {
