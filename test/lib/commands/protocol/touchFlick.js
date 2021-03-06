@@ -1,19 +1,27 @@
 'use strict';
 
-const addTouchFlick = require('lib/commands/protocol/touchFlick');
+const proxyquire = require('proxyquire');
 const {mkBrowser_} = require('../../../utils');
 
 describe('"touchFlick" command', () => {
-    let browser;
+    let browser, overwriteExistingCommand, overwriteTouchFlick;
 
     beforeEach(() => {
         browser = mkBrowser_();
+        overwriteExistingCommand = sinon.stub().callsFake((browser, name, command) => {
+            browser[name] = command.bind(browser, browser[name]);
+        });
+        overwriteTouchFlick = proxyquire('lib/commands/protocol/touchFlick', {
+            '../../helpers/overwriteExistingCommand': overwriteExistingCommand
+        });
     });
 
-    it('should overwrite "touchFlick" command', () => {
-        addTouchFlick(browser);
+    afterEach(() => sinon.restore());
 
-        assert.calledOnceWithExactly(browser.overwriteCommand, 'touchFlick', sinon.match.func);
+    it('should overwrite existing "touchFlick" command', () => {
+        overwriteTouchFlick(browser);
+
+        assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'touchFlick', sinon.match.func);
     });
 
     describe('should call original "touchFlick" with args', () => {
@@ -24,7 +32,7 @@ describe('"touchFlick" command', () => {
         });
 
         it('passed in old sequence', async () => {
-            addTouchFlick(browser);
+            overwriteTouchFlick(browser);
 
             await browser.touchFlick('element-id', 100, 200, 300, 400, 500);
 
@@ -32,7 +40,7 @@ describe('"touchFlick" command', () => {
         });
 
         it('passed in new sequence', async () => {
-            addTouchFlick(browser);
+            overwriteTouchFlick(browser);
 
             await browser.touchFlick(100, 200, 'element-id', 300, 400, 500);
 

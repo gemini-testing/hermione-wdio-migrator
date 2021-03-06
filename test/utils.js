@@ -130,6 +130,8 @@ exports.mkBrowser_ = () => {
     session.saveScreenshot = sinon.stub().named('saveScreenshot').resolves();
     session.waitUntil = sinon.stub().named('waitUntil').resolves();
     session.newWindow = sinon.stub().named('newWindow').resolves();
+    session.pressKeyCode = sinon.stub().named('pressKeyCode').resolves();
+    session.longPressKeyCode = sinon.stub().named('longPressKeyCode').resolves();
 
     return session;
 };

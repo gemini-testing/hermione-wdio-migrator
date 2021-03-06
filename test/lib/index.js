@@ -28,21 +28,21 @@ describe('plugin', () => {
 
     it('should do nothing if plugin is disabled', () => {
         const hermione = mkHermione_();
-        sinon.spy(hermione, 'on');
+        sinon.spy(hermione, 'prependListener');
 
         plugin(hermione);
 
-        assert.notCalled(hermione.on);
+        assert.notCalled(hermione.prependListener);
     });
 
     describe('master process', () => {
         it('should do nothing', () => {
             const hermione = mkHermione_({proc: 'master'});
-            sinon.spy(hermione, 'on');
+            sinon.spy(hermione, 'prependListener');
 
             plugin(hermione);
 
-            assert.notCalled(hermione.on);
+            assert.notCalled(hermione.prependListener);
         });
     });
 

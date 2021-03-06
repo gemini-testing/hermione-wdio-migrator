@@ -1,22 +1,33 @@
 'use strict';
 
-const addDeleteCookie = require('lib/commands/cookie/deleteCookie');
+const proxyquire = require('proxyquire');
 const {mkBrowser_} = require('../../../utils');
 
 describe('"deleteCookie" command', () => {
-    it('should overwrite "deleteCookie" command', () => {
-        const browser = mkBrowser_();
+    let browser, overwriteExistingCommand, overwriteDeleteCookie;
 
-        addDeleteCookie(browser);
+    beforeEach(() => {
+        browser = mkBrowser_();
+        overwriteExistingCommand = sinon.stub().callsFake((browser, name, command) => {
+            browser[name] = command.bind(browser, browser[name]);
+        });
+        overwriteDeleteCookie = proxyquire('lib/commands/cookie/deleteCookie', {
+            '../../helpers/overwriteExistingCommand': overwriteExistingCommand
+        });
+    });
 
-        assert.calledOnceWithExactly(browser.overwriteCommand, 'deleteCookie', sinon.match.func);
+    afterEach(() => sinon.restore());
+
+    it('should overwrite existing "deleteCookie" command', () => {
+        overwriteDeleteCookie(browser);
+
+        assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'deleteCookie', sinon.match.func);
     });
 
     it('should call "deleteAllCookies" if names not passed', async () => {
-        const browser = mkBrowser_();
         const origDeleteCookie = browser.deleteCookie;
 
-        addDeleteCookie(browser);
+        overwriteDeleteCookie(browser);
         await browser.deleteCookie();
 
         assert.calledOnceWithExactly(browser.deleteAllCookies);
@@ -24,10 +35,9 @@ describe('"deleteCookie" command', () => {
     });
 
     it('should call "deleteCookies" with passed names', async () => {
-        const browser = mkBrowser_();
         const origDeleteCookie = browser.deleteCookie;
 
-        addDeleteCookie(browser);
+        overwriteDeleteCookie(browser);
         await browser.deleteCookie(['name1', 'name2']);
 
         assert.calledOnceWithExactly(browser.deleteCookies, ['name1', 'name2']);

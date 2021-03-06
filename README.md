@@ -26,11 +26,11 @@ Add plugin to your `hermione` config file:
 module.exports = {
     // ...
     plugins: {
-        // Important!!! This plugin should be enabled first, otherwise its work is not guaranteed
+        // ...
+        // Important!!! This plugin should be enabled last, otherwise its work is not guaranteed
         'hermione-wdio-migrator': {
             enabled: true
-        },
-        // ...
+        }
     },
     // ...
 };

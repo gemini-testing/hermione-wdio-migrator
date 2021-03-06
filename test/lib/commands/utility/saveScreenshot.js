@@ -1,32 +1,42 @@
 'use strict';
 
-const addSaveScreenshot = require('lib/commands/utility/saveScreenshot');
+const proxyquire = require('proxyquire');
 const {mkBrowser_} = require('../../../utils');
 
 describe('"saveScreenshot" command', () => {
-    it('should overwrite "saveScreenshot" command', () => {
-        const browser = mkBrowser_();
+    let browser, overwriteExistingCommand, overwriteSaveScreenshot;
 
-        addSaveScreenshot(browser);
+    beforeEach(() => {
+        browser = mkBrowser_();
+        overwriteExistingCommand = sinon.stub().callsFake((browser, name, command) => {
+            browser[name] = command.bind(browser, browser[name]);
+        });
+        overwriteSaveScreenshot = proxyquire('lib/commands/utility/saveScreenshot', {
+            '../../helpers/overwriteExistingCommand': overwriteExistingCommand
+        });
+    });
 
-        assert.calledOnceWithExactly(browser.overwriteCommand, 'saveScreenshot', sinon.match.func);
+    afterEach(() => sinon.restore());
+
+    it('should overwrite existing "saveScreenshot" command', () => {
+        overwriteSaveScreenshot(browser);
+
+        assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'saveScreenshot', sinon.match.func);
     });
 
     it('should call original "saveScreenshot" with passed filename', async () => {
-        const browser = mkBrowser_();
         const origSaveScreenshot = browser.saveScreenshot;
 
-        addSaveScreenshot(browser);
+        overwriteSaveScreenshot(browser);
         await browser.saveScreenshot('./screen.png');
 
         assert.calledOnceWithExactly(origSaveScreenshot, './screen.png');
     });
 
     it('should call "takeScreenshot" if filename is not passed', async () => {
-        const browser = mkBrowser_();
         const origSaveScreenshot = browser.saveScreenshot;
 
-        addSaveScreenshot(browser);
+        overwriteSaveScreenshot(browser);
         await browser.saveScreenshot();
 
         assert.calledOnceWithExactly(browser.takeScreenshot);
