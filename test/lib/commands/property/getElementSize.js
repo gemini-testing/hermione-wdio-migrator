@@ -4,26 +4,30 @@ const proxyquire = require('proxyquire');
 const {mkBrowser_, mkElement_} = require('../../../utils');
 
 describe('"getElementSize" command', () => {
-    let browser, findElement, addGetElementSize;
+    let browser, findElement, overwriteExistingCommand, overwriteGetElementSize;
 
     beforeEach(() => {
         browser = mkBrowser_();
         findElement = sinon.stub().resolves(mkElement_());
-        addGetElementSize = proxyquire('lib/commands/property/getElementSize', {
-            '../../helpers/findElement': findElement
+        overwriteExistingCommand = sinon.stub().callsFake((_, name, command) => {
+            browser[name] = command.bind(browser, browser[name]);
+        });
+        overwriteGetElementSize = proxyquire('lib/commands/property/getElementSize', {
+            '../../helpers/findElement': findElement,
+            '../../helpers/overwriteExistingCommand': overwriteExistingCommand
         });
     });
 
     afterEach(() => sinon.restore());
 
-    it('should overwrite "getElementSize" command', () => {
-        addGetElementSize(browser);
+    it('should overwrite existing "getElementSize" command', () => {
+        overwriteGetElementSize(browser);
 
-        assert.calledOnceWithExactly(browser.overwriteCommand, 'getElementSize', sinon.match.func);
+        assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'getElementSize', sinon.match.func);
     });
 
     it('should get element by passed selector', async () => {
-        addGetElementSize(browser);
+        overwriteGetElementSize(browser);
 
         await browser.getElementSize('.some-selector');
 
@@ -35,7 +39,7 @@ describe('"getElementSize" command', () => {
         const origGetElementSize = browser.getElementSize;
 
         findElement.withArgs(browser, '.some-selector').resolves(element);
-        addGetElementSize(browser);
+        overwriteGetElementSize(browser);
 
         await browser.getElementSize('.some-selector');
 
@@ -47,7 +51,7 @@ describe('"getElementSize" command', () => {
 
         findElement.withArgs(browser, '.some-selector').resolves(element);
         browser.getElementSize.withArgs(123).returns({width: 100, height: 200});
-        addGetElementSize(browser);
+        overwriteGetElementSize(browser);
 
         const result = await browser.getElementSize('.some-selector');
 
@@ -59,7 +63,7 @@ describe('"getElementSize" command', () => {
 
         findElement.withArgs(browser, '.some-selector').resolves(element);
         browser.getElementSize.withArgs(123).returns({width: 100, height: 200});
-        addGetElementSize(browser);
+        overwriteGetElementSize(browser);
 
         const result = await browser.getElementSize('.some-selector', 'width');
 

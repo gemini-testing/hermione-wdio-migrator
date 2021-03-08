@@ -1,19 +1,27 @@
 'use strict';
 
-const addTouchScroll = require('lib/commands/protocol/touchScroll');
+const proxyquire = require('proxyquire');
 const {mkBrowser_} = require('../../../utils');
 
 describe('"touchScroll" command', () => {
-    let browser;
+    let browser, overwriteExistingCommand, overwriteTouchScroll;
 
     beforeEach(() => {
         browser = mkBrowser_();
+        overwriteExistingCommand = sinon.stub().callsFake((browser, name, command) => {
+            browser[name] = command.bind(browser, browser[name]);
+        });
+        overwriteTouchScroll = proxyquire('lib/commands/protocol/touchScroll', {
+            '../../helpers/overwriteExistingCommand': overwriteExistingCommand
+        });
     });
 
-    it('should overwrite "touchScroll" command', () => {
-        addTouchScroll(browser);
+    afterEach(() => sinon.restore());
 
-        assert.calledOnceWithExactly(browser.overwriteCommand, 'touchScroll', sinon.match.func);
+    it('should overwrite existing "touchScroll" command', () => {
+        overwriteTouchScroll(browser);
+
+        assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'touchScroll', sinon.match.func);
     });
 
     describe('should call original "touchScroll" with args', () => {
@@ -24,7 +32,7 @@ describe('"touchScroll" command', () => {
         });
 
         it('passed in old sequence', async () => {
-            addTouchScroll(browser);
+            overwriteTouchScroll(browser);
 
             await browser.touchScroll('element-id', 100, 200);
 
@@ -32,7 +40,7 @@ describe('"touchScroll" command', () => {
         });
 
         it('passed in new sequence', async () => {
-            addTouchScroll(browser);
+            overwriteTouchScroll(browser);
 
             await browser.touchScroll(100, 200, 'element-id');
 

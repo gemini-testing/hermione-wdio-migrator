@@ -1,34 +1,44 @@
 'use strict';
 
-const addWaitUntil = require('lib/commands/utility/waitUntil');
+const proxyquire = require('proxyquire');
 const {mkBrowser_} = require('../../../utils');
 
 describe('"waitUntil" command', () => {
-    it('should overwrite "waitUntil" command', () => {
-        const browser = mkBrowser_();
+    let browser, overwriteExistingCommand, overwriteWaitUntil;
 
-        addWaitUntil(browser);
+    beforeEach(() => {
+        browser = mkBrowser_();
+        overwriteExistingCommand = sinon.stub().callsFake((browser, name, command) => {
+            browser[name] = command.bind(browser, browser[name]);
+        });
+        overwriteWaitUntil = proxyquire('lib/commands/utility/waitUntil', {
+            '../../helpers/overwriteExistingCommand': overwriteExistingCommand
+        });
+    });
 
-        assert.calledOnceWithExactly(browser.overwriteCommand, 'waitUntil', sinon.match.func);
+    afterEach(() => sinon.restore());
+
+    it('should overwrite existing "waitUntil" command', () => {
+        overwriteWaitUntil(browser);
+
+        assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'waitUntil', sinon.match.func);
     });
 
     it('should call original "waitUntil" with args passed in old format', async () => {
-        const browser = mkBrowser_();
         const origWaitUntil = browser.waitUntil;
         const condition = sinon.spy();
 
-        addWaitUntil(browser);
+        overwriteWaitUntil(browser);
         await browser.waitUntil(condition, 100, 'some-msg', 200);
 
         assert.calledOnceWithExactly(origWaitUntil, condition, {timeout: 100, timeoutMsg: 'some-msg', interval: 200});
     });
 
     it('should call original "waitUntil" with args passed in new format', async () => {
-        const browser = mkBrowser_();
         const origWaitUntil = browser.waitUntil;
         const condition = sinon.spy();
 
-        addWaitUntil(browser);
+        overwriteWaitUntil(browser);
         await browser.waitUntil(condition, {timeout: 100, timeoutMsg: 'some-msg', interval: 200});
 
         assert.calledOnceWithExactly(origWaitUntil, condition, {timeout: 100, timeoutMsg: 'some-msg', interval: 200});
