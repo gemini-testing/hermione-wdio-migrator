@@ -60,11 +60,22 @@ describe('"addCommand" command', () => {
     });
 
     it('should call overwritten command with correct args', () => {
+        const cb = sinon.spy();
         overwriteAddCommand(browser);
 
-        browser.addCommand('someCommand', () => {}, true);
+        browser.addCommand('someCommand', cb, true);
         browser.someCommand('foo', 'bar');
 
         assert.calledOnceWithExactly(browser.someCommand, 'foo', 'bar');
+    });
+
+    it('should call callback of overwritten command with browser context', () => {
+        const cb = sinon.spy();
+        overwriteAddCommand(browser);
+
+        browser.addCommand('someCommand', cb, true);
+        browser.someCommand();
+
+        assert.calledOn(cb, browser);
     });
 });
