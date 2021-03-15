@@ -22,14 +22,6 @@ describe('"waitForEnabled" command', () => {
         assert.calledOnceWithExactly(browser.addCommand, 'waitForEnabled', sinon.match.func);
     });
 
-    it('should get elements by passed selector', async () => {
-        addWaitForEnabled(browser);
-
-        await browser.waitForEnabled('.some-selector');
-
-        assert.calledOnceWithExactly(findElements, browser, '.some-selector');
-    });
-
     it('should call "waitUntil" with correct args', async () => {
         addWaitForEnabled(browser);
 
@@ -40,6 +32,39 @@ describe('"waitForEnabled" command', () => {
             sinon.match.func,
             {timeout: 100, timeoutMsg: 'element (".some-selector") still not enabled after 100ms'}
         );
+    });
+
+    it('should get elements by passed selector', async () => {
+        findElements.withArgs(browser, '.some-selector').resolves([]);
+        addWaitForEnabled(browser);
+
+        await browser.waitForEnabled('.some-selector');
+        const waitUntilHandler = browser.waitUntil.firstCall.args[0];
+        await waitUntilHandler();
+
+        assert.calledOnceWithExactly(findElements, browser, '.some-selector');
+    });
+
+    it('should return "true" if elements are not found in reverse mode', async () => {
+        findElements.withArgs(browser, '.some-selector').resolves([]);
+        addWaitForEnabled(browser);
+
+        await browser.waitForEnabled('.some-selector', 100, true);
+        const waitUntilHandler = browser.waitUntil.firstCall.args[0];
+        const result = await waitUntilHandler();
+
+        assert.isTrue(result);
+    });
+
+    it('should return "false" if elements are not found in normal mode', async () => {
+        findElements.withArgs(browser, '.some-selector').resolves([]);
+        addWaitForEnabled(browser);
+
+        await browser.waitForEnabled('.some-selector', 100, false);
+        const waitUntilHandler = browser.waitUntil.firstCall.args[0];
+        const result = await waitUntilHandler();
+
+        assert.isFalse(result);
     });
 
     it('should check that each found element is enabled', async () => {
