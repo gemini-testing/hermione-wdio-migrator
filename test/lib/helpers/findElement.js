@@ -12,17 +12,6 @@ describe('"findElement" helper', () => {
 
     afterEach(() => sinon.restore());
 
-    it('should throw error if element does not found by passed selector', async () => {
-        const error = {message: 'o.O'};
-
-        browser.$.withArgs('.nonexistent-selector').resolves({error});
-
-        await assert.isRejected(
-            findElement(browser, '.nonexistent-selector'),
-            'o.O'
-        );
-    });
-
     it('should return found element by passed selector', async () => {
         const element = mkElement_();
         browser.$.withArgs('.some-selector').resolves(element);
