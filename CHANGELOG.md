@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.3...v0.1.4) (2021-03-18)
+
+
+### Bug Fixes
+
+* "getCssProperty", "scroll" and "touchScroll" commands ([a6a33b2](https://github.com/gemini-testing/hermione-wdio-migrator/commit/a6a33b2952ee34bb9ce69ec12321699c92629681))
+
 ### [0.1.3](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.2...v0.1.3) (2021-03-16)
 
 
