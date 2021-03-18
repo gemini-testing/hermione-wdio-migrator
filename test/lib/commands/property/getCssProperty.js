@@ -30,7 +30,7 @@ describe('"getCssProperty" command', () => {
         assert.calledOnceWithExactly(findElement, browser, '.some-selector');
     });
 
-    it('should call "getCssProperty" on browser element with passed css property', async () => {
+    it('should call "getCSSProperty" on browser element with passed css property', async () => {
         const browser = mkBrowser_();
         const element = mkElement_();
 
@@ -39,6 +39,6 @@ describe('"getCssProperty" command', () => {
 
         await browser.getCssProperty('.some-selector', 'color');
 
-        assert.calledOnceWithExactly(element.getCssProperty, 'color');
+        assert.calledOnceWithExactly(element.getCSSProperty, 'color');
     });
 });
