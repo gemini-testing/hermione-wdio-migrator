@@ -24,14 +24,22 @@ describe('"touchScroll" command', () => {
         assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'touchScroll', sinon.match.func);
     });
 
-    describe('should call original "touchScroll" with args', () => {
+    describe('should call original "touchScroll" with', () => {
         let origTouchScroll;
 
         beforeEach(() => {
             origTouchScroll = browser.touchScroll;
         });
 
-        it('passed in old sequence', async () => {
+        it('default "xOffset" and "yOffset"', async () => {
+            overwriteTouchScroll(browser);
+
+            await browser.touchScroll('element-id');
+
+            assert.calledOnceWithExactly(origTouchScroll, 0, 0, 'element-id');
+        });
+
+        it('args passed in old sequence', async () => {
             overwriteTouchScroll(browser);
 
             await browser.touchScroll('element-id', 100, 200);
@@ -39,7 +47,7 @@ describe('"touchScroll" command', () => {
             assert.calledOnceWithExactly(origTouchScroll, 100, 200, 'element-id');
         });
 
-        it('passed in new sequence', async () => {
+        it('args passed in new sequence', async () => {
             overwriteTouchScroll(browser);
 
             await browser.touchScroll(100, 200, 'element-id');

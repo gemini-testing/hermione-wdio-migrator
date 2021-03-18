@@ -4,6 +4,7 @@ exports.mkBrowser_ = () => {
     const session = Promise.resolve();
 
     session.commandList = [];
+    session.isMobile = false;
 
     session.addCommand = sinon.stub().callsFake((name, command) => {
         session[name] = command;
@@ -153,7 +154,7 @@ exports.mkElement_ = (opts = {}) => {
     element.setValue = sinon.stub().named('setValue').resolves();
     element.touchAction = sinon.stub().named('touchAction').resolves();
     element.getAttribute = sinon.stub().named('getAttribute').resolves();
-    element.getCssProperty = sinon.stub().named('getCssProperty').resolves();
+    element.getCSSProperty = sinon.stub().named('getCSSProperty').resolves();
     element.getHTML = sinon.stub().named('getHTML').resolves();
     element.getLocation = sinon.stub().named('getLocation').resolves();
     element.getTagName = sinon.stub().named('getTagName').resolves();
