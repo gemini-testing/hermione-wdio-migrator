@@ -38,7 +38,7 @@ describe('"chooseFile" command', () => {
         assert.calledOnceWithExactly(findElement, browser, '.some-selector');
     });
 
-    it('should set uploaded file path to passed selector', async () => {
+    it('should add uploaded file path to passed selector', async () => {
         const browser = mkBrowser_();
         const element = mkElement_();
 
@@ -48,6 +48,6 @@ describe('"chooseFile" command', () => {
 
         await browser.chooseFile('.some-selector', '/local/file.png');
 
-        assert.calledOnceWithExactly(element.setValue, '/remote/file.png');
+        assert.calledOnceWithExactly(element.addValue, '/remote/file.png');
     });
 });
