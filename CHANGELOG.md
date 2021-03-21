@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.4...v0.1.5) (2021-03-21)
+
+
+### Bug Fixes
+
+* commands "deleteCookie", "chooseFile" and "close" ([112cd6b](https://github.com/gemini-testing/hermione-wdio-migrator/commit/112cd6bed5c13a70b62ece3f6384ff5d9609aa1b))
+
 ### [0.1.4](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.3...v0.1.4) (2021-03-18)
 
 
