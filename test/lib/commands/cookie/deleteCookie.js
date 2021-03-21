@@ -24,7 +24,7 @@ describe('"deleteCookie" command', () => {
         assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'deleteCookie', sinon.match.func);
     });
 
-    it('should call "deleteAllCookies" if names not passed', async () => {
+    it('should call "deleteAllCookies" if name is not passed', async () => {
         const origDeleteCookie = browser.deleteCookie;
 
         overwriteDeleteCookie(browser);
@@ -34,13 +34,12 @@ describe('"deleteCookie" command', () => {
         assert.notCalled(origDeleteCookie);
     });
 
-    it('should call "deleteCookies" with passed names', async () => {
+    it('should call original "deleteCookie" with passed name', async () => {
         const origDeleteCookie = browser.deleteCookie;
 
         overwriteDeleteCookie(browser);
-        await browser.deleteCookie(['name1', 'name2']);
+        await browser.deleteCookie('cookie-name');
 
-        assert.calledOnceWithExactly(browser.deleteCookies, ['name1', 'name2']);
-        assert.notCalled(origDeleteCookie);
+        assert.calledOnceWithExactly(origDeleteCookie, 'cookie-name');
     });
 });
