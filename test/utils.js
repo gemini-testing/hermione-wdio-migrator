@@ -4,6 +4,7 @@ exports.mkBrowser_ = () => {
     const session = Promise.resolve();
 
     session.commandList = [];
+    session.isW3C = false;
     session.isMobile = false;
 
     session.addCommand = sinon.stub().callsFake((name, command) => {
@@ -148,6 +149,7 @@ exports.mkElement_ = (opts = {}) => {
     element.doubleClick = sinon.stub().named('doubleClick').resolves();
     element.dragAndDrop = sinon.stub().named('dragAndDrop').resolves();
     element.moveTo = sinon.stub().named('moveTo').resolves();
+    element.scrollIntoView = sinon.stub().named('scrollIntoView').resolves();
     element.selectByAttribute = sinon.stub().named('selectByAttribute').resolves();
     element.selectByIndex = sinon.stub().named('selectByIndex').resolves();
     element.selectByVisibleText = sinon.stub().named('selectByVisibleText').resolves();
