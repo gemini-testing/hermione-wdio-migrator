@@ -4,6 +4,7 @@ exports.mkBrowser_ = () => {
     const session = Promise.resolve();
 
     session.commandList = [];
+    session.isW3C = false;
     session.isMobile = false;
 
     session.addCommand = sinon.stub().callsFake((name, command) => {
