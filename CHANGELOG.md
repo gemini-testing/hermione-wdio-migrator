@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.5...v0.1.6) (2021-03-30)
+
+
+### Bug Fixes
+
+* "moveToObject" command ([e8cb30e](https://github.com/gemini-testing/hermione-wdio-migrator/commit/e8cb30e48d7bd6e0ef4ba7c271e198b386a9b93d))
+* add "buttonDown" and "buttonUp" commands ([6243877](https://github.com/gemini-testing/hermione-wdio-migrator/commit/6243877f41848c07da080025b9ae870444e8291f))
+
 ### [0.1.5](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.4...v0.1.5) (2021-03-21)
 
 
