@@ -4,20 +4,45 @@ const addMoveTo = require('lib/commands/protocol/moveTo');
 const {mkBrowser_} = require('../../../utils');
 
 describe('"moveTo" command', () => {
-    it('should add "moveTo" command', () => {
-        const browser = mkBrowser_();
+    let browser;
 
+    beforeEach(() => {
+        browser = mkBrowser_();
+    });
+
+    it('should add "moveTo" command', () => {
         addMoveTo(browser);
 
         assert.calledOnceWithExactly(browser.addCommand, 'moveTo', sinon.match.func);
     });
 
-    it('should call "moveToElement" with passed element and offsets', async () => {
-        const browser = mkBrowser_();
+    describe('browser does not support w3c protocol', () => {
+        beforeEach(() => {
+            browser.isW3C = false;
+        });
 
-        addMoveTo(browser);
-        await browser.moveTo('some-element', 100, 200);
+        it('should call "moveToElement" with passed element and offsets', async () => {
+            addMoveTo(browser);
 
-        assert.calledOnceWithExactly(browser.moveToElement, 'some-element', 100, 200);
+            await browser.moveTo('some-element', 100, 200);
+
+            assert.calledOnceWithExactly(browser.moveToElement, 'some-element', 100, 200);
+        });
+    });
+
+    describe('browser support w3c protocol', () => {
+        beforeEach(() => {
+            browser.isW3C = true;
+            browser.moveToElement = undefined;
+        });
+
+        it('should throw error if "moveToElement" does not exists', async () => {
+            addMoveTo(browser);
+
+            await assert.isRejected(
+                browser.moveTo('some-element', 100, 200),
+                'Use "moveTo" command on element or "moveToObject" on browser'
+            );
+        });
     });
 });

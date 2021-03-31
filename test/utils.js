@@ -18,6 +18,7 @@ exports.mkBrowser_ = () => {
 
     session.$ = sinon.stub().named('$').resolves(exports.mkElement_());
     session.$$ = sinon.stub().named('$$').resolves([exports.mkElement_(), exports.mkElement_()]);
+    session.getUrl = sinon.stub().named('getUrl').resolves();
     session.execute = sinon.stub().named('execute').resolves();
     session.executeAsync = sinon.stub().named('executeAsync').resolves();
     session.deleteCookies = sinon.stub().named('deleteCookies').resolves();
@@ -148,6 +149,7 @@ exports.mkElement_ = (opts = {}) => {
     element.click = sinon.stub().named('click').resolves();
     element.doubleClick = sinon.stub().named('doubleClick').resolves();
     element.dragAndDrop = sinon.stub().named('dragAndDrop').resolves();
+    element.getSize = sinon.stub().named('getSize').resolves();
     element.moveTo = sinon.stub().named('moveTo').resolves();
     element.scrollIntoView = sinon.stub().named('scrollIntoView').resolves();
     element.selectByAttribute = sinon.stub().named('selectByAttribute').resolves();

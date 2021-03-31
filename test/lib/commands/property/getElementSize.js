@@ -20,53 +20,115 @@ describe('"getElementSize" command', () => {
 
     afterEach(() => sinon.restore());
 
-    it('should overwrite existing "getElementSize" command', () => {
-        overwriteGetElementSize(browser);
+    describe('browser does not support w3c protocol', () => {
+        beforeEach(() => {
+            browser.isW3C = false;
+        });
 
-        assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'getElementSize', sinon.match.func);
+        it('should not add existing "getElementSize" command', () => {
+            overwriteGetElementSize(browser);
+
+            assert.notCalled(browser.addCommand);
+        });
+
+        it('should overwrite existing "getElementSize" command', () => {
+            overwriteGetElementSize(browser);
+
+            assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'getElementSize', sinon.match.func);
+        });
+
+        it('should get element by passed selector', async () => {
+            overwriteGetElementSize(browser);
+
+            await browser.getElementSize('.some-selector');
+
+            assert.calledOnceWithExactly(findElement, browser, '.some-selector');
+        });
+
+        it('should call original "getElementSize" with found element id', async () => {
+            const element = mkElement_({id: 123});
+            const origGetElementSize = browser.getElementSize;
+
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            overwriteGetElementSize(browser);
+
+            await browser.getElementSize('.some-selector');
+
+            assert.calledOnceWithExactly(origGetElementSize, 123);
+        });
+
+        it('should return all info about element size if "prop" parameter is not passed', async () => {
+            const element = mkElement_({id: 123});
+
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            browser.getElementSize.withArgs(123).returns({width: 100, height: 200});
+            overwriteGetElementSize(browser);
+
+            const result = await browser.getElementSize('.some-selector');
+
+            assert.deepEqual(result, {width: 100, height: 200});
+        });
+
+        it('should return only one property of size if "prop" parameter is passed', async () => {
+            const element = mkElement_({id: 123});
+
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            browser.getElementSize.withArgs(123).returns({width: 100, height: 200});
+            overwriteGetElementSize(browser);
+
+            const result = await browser.getElementSize('.some-selector', 'width');
+
+            assert.equal(result, 100);
+        });
     });
 
-    it('should get element by passed selector', async () => {
-        overwriteGetElementSize(browser);
+    describe('browser support w3c protocol', () => {
+        beforeEach(() => {
+            browser.isW3C = true;
+        });
 
-        await browser.getElementSize('.some-selector');
+        it('should not overwrite not existing "getElementSize" command', () => {
+            overwriteGetElementSize(browser);
 
-        assert.calledOnceWithExactly(findElement, browser, '.some-selector');
-    });
+            assert.notCalled(overwriteExistingCommand);
+        });
 
-    it('should call original "getElementSize" with found element id', async () => {
-        const element = mkElement_({id: 123});
-        const origGetElementSize = browser.getElementSize;
+        it('should add not existing "getElementSize" command', () => {
+            overwriteGetElementSize(browser);
 
-        findElement.withArgs(browser, '.some-selector').resolves(element);
-        overwriteGetElementSize(browser);
+            assert.calledOnceWithExactly(browser.addCommand, 'getElementSize', sinon.match.func);
+        });
 
-        await browser.getElementSize('.some-selector');
+        it('should get element by passed selector', async () => {
+            overwriteGetElementSize(browser);
 
-        assert.calledOnceWithExactly(origGetElementSize, 123);
-    });
+            await browser.getElementSize('.some-selector');
 
-    it('should return all info about element size if "prop" parameter is not passed', async () => {
-        const element = mkElement_({id: 123});
+            assert.calledOnceWithExactly(findElement, browser, '.some-selector');
+        });
 
-        findElement.withArgs(browser, '.some-selector').resolves(element);
-        browser.getElementSize.withArgs(123).returns({width: 100, height: 200});
-        overwriteGetElementSize(browser);
+        it('should return all info about element size if "prop" parameter is not passed', async () => {
+            const element = mkElement_();
+            element.getSize.withArgs(undefined).returns({width: 100, height: 200});
 
-        const result = await browser.getElementSize('.some-selector');
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            overwriteGetElementSize(browser);
 
-        assert.deepEqual(result, {width: 100, height: 200});
-    });
+            const result = await browser.getElementSize('.some-selector');
 
-    it('should return only one property of size if "prop" parameter is passed', async () => {
-        const element = mkElement_({id: 123});
+            assert.deepEqual(result, {width: 100, height: 200});
+        });
 
-        findElement.withArgs(browser, '.some-selector').resolves(element);
-        browser.getElementSize.withArgs(123).returns({width: 100, height: 200});
-        overwriteGetElementSize(browser);
+        it('should return only one property of size if "prop" parameter is passed', async () => {
+            const element = mkElement_();
+            element.getSize.withArgs('width').returns(100);
 
-        const result = await browser.getElementSize('.some-selector', 'width');
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            overwriteGetElementSize(browser);
 
-        assert.equal(result, 100);
+            const result = await browser.getElementSize('.some-selector', 'width');
+
+            assert.equal(result, 100);
+        });
     });
 });
