@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.6...v0.1.7) (2021-03-31)
+
+
+### Bug Fixes
+
+* **w3c:** "getAttribute", "getElementSize" and "moveTo" commands ([3c53e49](https://github.com/gemini-testing/hermione-wdio-migrator/commit/3c53e49fa48ffcbd64ae8e1298a1b471a2618900))
+
 ### [0.1.6](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.5...v0.1.6) (2021-03-30)
 
 
