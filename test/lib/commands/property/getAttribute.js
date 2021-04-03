@@ -84,28 +84,62 @@ describe('"getAttribute" command', () => {
         });
 
         ['href', 'action'].forEach((attrName) => {
-            [
-                {
-                    name: 'relative url without protocol',
-                    url: '//ya.ru',
-                    expectedUrl: 'https://ya.ru'},
-                {
-                    name: 'relative url without protocol and host',
-                    url: '/relative',
-                    expectedUrl: 'https://foo.bar/relative'
-                }
-            ].forEach(({name, url, expectedUrl}) => {
-                it(`should transform ${name} of "${attrName}" attribute`, async () => {
+            describe(`${attrName} attribute`, () => {
+                [
+                    {
+                        name: 'relative url without protocol',
+                        url: '//ya.ru',
+                        expectedUrl: 'https://ya.ru'
+                    },
+                    {
+                        name: 'relative url without protocol and host',
+                        url: '/relative',
+                        expectedUrl: 'https://foo.bar/relative'
+                    },
+                    {
+                        name: 'relative url without slashes',
+                        url: 'relative',
+                        expectedUrl: 'https://foo.bar/baz/relative'
+                    }
+                ].forEach(({name, url, expectedUrl}) => {
+                    it(`should transform ${name}`, async () => {
+                        const element = mkElement_();
+                        element.getAttribute.withArgs(attrName).resolves(url);
+
+                        findElement.withArgs(browser, '.some-selector').resolves(element);
+                        browser.getUrl.resolves('https://foo.bar/baz/');
+                        addGetAttribute(browser);
+
+                        const result = await browser.getAttribute('.some-selector', attrName);
+
+                        assert.equal(result, expectedUrl);
+                    });
+                });
+
+                it('should not throw if attribute value is empty', async () => {
                     const element = mkElement_();
-                    element.getAttribute.withArgs(attrName).resolves(url);
+                    element.getAttribute.withArgs(attrName).resolves(null);
 
                     findElement.withArgs(browser, '.some-selector').resolves(element);
-                    browser.getUrl.resolves('https://foo.bar');
+                    browser.getUrl.resolves('https://foo.bar/');
                     addGetAttribute(browser);
 
                     const result = await browser.getAttribute('.some-selector', attrName);
 
-                    assert.equal(result, expectedUrl);
+                    assert.isNull(result);
+                });
+
+                it('should not transform if attribute value has protocol', async () => {
+                    const element = mkElement_();
+                    element.getAttribute.withArgs(attrName).resolves('tel:+123456789');
+
+                    findElement.withArgs(browser, '.some-selector').resolves(element);
+                    browser.getUrl.resolves('https://foo.bar/');
+                    addGetAttribute(browser);
+
+                    const result = await browser.getAttribute('.some-selector', attrName);
+
+                    assert.equal(result, 'tel:+123456789');
                 });
             });
         });

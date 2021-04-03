@@ -63,126 +63,165 @@ describe('"moveToObject" command', () => {
             browser.isW3C = true;
         });
 
-        it('should get element by passed selector', async () => {
-            const element = mkElement_({id: 100500});
-            browser.getElementRect.withArgs(100500).resolves({x: 0, y: 0, width: 10, height: 10});
-            browser.execute.onFirstCall().resolves({x: 0, y: 0, width: 100, height: 100});
-            findElement.withArgs(browser, '.some-selector').resolves(element);
-
-            addMoveToObject(browser);
-
-            await browser.moveToObject('.some-selector');
-
-            assert.calledOnceWithExactly(findElement, browser, '.some-selector');
-        });
-
-        it('should get element and viewport rects', async () => {
-            const element = mkElement_({id: 100500});
-            browser.getElementRect.withArgs(100500).resolves({x: 0, y: 0, width: 10, height: 10});
-            browser.execute.onFirstCall().resolves({x: 0, y: 0, width: 100, height: 100});
-            findElement.withArgs(browser, '.some-selector').resolves(element);
-
-            addMoveToObject(browser);
-
-            await browser.moveToObject('.some-selector');
-
-            assert.calledOnceWithExactly(browser.getElementRect, 100500);
-            assert.calledOnceWithExactly(browser.execute, sinon.match.func);
-        });
-
-        describe('element is inside viewport', () => {
-            let element;
-
+        describe('browser runs in mobile device', () => {
             beforeEach(() => {
-                element = mkElement_({id: 100500});
+                browser.isMobile = true;
+            });
+
+            it('should not call "moveTo" on element or "performActions" on browser', async () => {
+                const element = mkElement_();
+
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addMoveToObject(browser);
+
+                await browser.moveToObject('.some-selector');
+
+                assert.notCalled(element.moveTo);
+                assert.notCalled(browser.performActions);
+            });
+
+            it('should perform touch action with passed offsets', async () => {
+                const element = mkElement_();
+
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addMoveToObject(browser);
+
+                await browser.moveToObject('.some-selector', 100, 200);
+
+                assert.calledOnceWithExactly(element.touchAction, [
+                    'press',
+                    {action: 'moveTo', x: 100, y: 200},
+                    'release'
+                ]);
+            });
+        });
+
+        describe('browser runs in desktop device', () => {
+            beforeEach(() => {
+                browser.isMobile = false;
+            });
+
+            it('should get element by passed selector', async () => {
+                const element = mkElement_({id: 100500});
                 browser.getElementRect.withArgs(100500).resolves({x: 0, y: 0, width: 10, height: 10});
                 browser.execute.onFirstCall().resolves({x: 0, y: 0, width: 100, height: 100});
                 findElement.withArgs(browser, '.some-selector').resolves(element);
-            });
 
-            it('should move to the center of the element if offset coords is not passed', async () => {
-                getPerformActionId.withArgs(browser).returns('some-pointer-id');
                 addMoveToObject(browser);
 
                 await browser.moveToObject('.some-selector');
 
-                assert.calledOnceWithExactly(browser.performActions, [{
-                    type: 'pointer',
-                    id: 'some-pointer-id',
-                    parameters: {pointerType: 'mouse'},
-                    actions: [{type: 'pointerMove', duration: 0, x: 5, y: 5}]
-                }]);
+                assert.calledOnceWithExactly(findElement, browser, '.some-selector');
             });
 
-            it('should move to the passed offset coords', async () => {
-                getPerformActionId.withArgs(browser).returns('some-pointer-id');
-                addMoveToObject(browser);
-
-                await browser.moveToObject('.some-selector', 1, 1);
-
-                assert.calledOnceWithExactly(browser.performActions, [{
-                    type: 'pointer',
-                    id: 'some-pointer-id',
-                    parameters: {pointerType: 'mouse'},
-                    actions: [{type: 'pointerMove', duration: 0, x: 1, y: 1}]
-                }]);
-            });
-
-            it('should not scroll into view of the element', async () => {
-                addMoveToObject(browser);
-
-                await browser.moveToObject('.some-selector');
-
-                assert.notCalled(element.scrollIntoView);
-            });
-        });
-
-        describe('element is outside of the viewport', () => {
-            let element;
-
-            beforeEach(() => {
-                element = mkElement_({id: 100500});
-                browser.getElementRect.withArgs(100500).resolves({x: 10, y: 10, width: 10, height: 10});
-                browser.execute
-                    .onFirstCall().resolves({x: 0, y: 0, width: 10, height: 10})
-                    .onSecondCall().resolves({x: 10, y: 10, width: 10, height: 10});
+            it('should get element and viewport rects', async () => {
+                const element = mkElement_({id: 100500});
+                browser.getElementRect.withArgs(100500).resolves({x: 0, y: 0, width: 10, height: 10});
+                browser.execute.onFirstCall().resolves({x: 0, y: 0, width: 100, height: 100});
                 findElement.withArgs(browser, '.some-selector').resolves(element);
-            });
 
-            it('should scroll into view of the element', async () => {
                 addMoveToObject(browser);
 
                 await browser.moveToObject('.some-selector');
 
-                assert.calledOnceWithExactly(element.scrollIntoView);
+                assert.calledOnceWithExactly(browser.getElementRect, 100500);
+                assert.calledOnceWithExactly(browser.execute, sinon.match.func);
             });
 
-            it('should move to the center of the element if offset coords is not passed', async () => {
-                getPerformActionId.withArgs(browser).returns('some-pointer-id');
-                addMoveToObject(browser);
+            describe('element is inside viewport', () => {
+                let element;
 
-                await browser.moveToObject('.some-selector');
+                beforeEach(() => {
+                    element = mkElement_({id: 100500});
+                    browser.getElementRect.withArgs(100500).resolves({x: 0, y: 0, width: 10, height: 10});
+                    browser.execute.onFirstCall().resolves({x: 0, y: 0, width: 100, height: 100});
+                    findElement.withArgs(browser, '.some-selector').resolves(element);
+                });
 
-                assert.calledOnceWithExactly(browser.performActions, [{
-                    type: 'pointer',
-                    id: 'some-pointer-id',
-                    parameters: {pointerType: 'mouse'},
-                    actions: [{type: 'pointerMove', duration: 0, x: 5, y: 5}]
-                }]);
+                it('should move to the center of the element if offset coords is not passed', async () => {
+                    getPerformActionId.withArgs(browser).returns('some-pointer-id');
+                    addMoveToObject(browser);
+
+                    await browser.moveToObject('.some-selector');
+
+                    assert.calledOnceWithExactly(browser.performActions, [{
+                        type: 'pointer',
+                        id: 'some-pointer-id',
+                        parameters: {pointerType: 'mouse'},
+                        actions: [{type: 'pointerMove', duration: 0, x: 5, y: 5}]
+                    }]);
+                });
+
+                it('should move to the passed offset coords', async () => {
+                    getPerformActionId.withArgs(browser).returns('some-pointer-id');
+                    addMoveToObject(browser);
+
+                    await browser.moveToObject('.some-selector', 1, 1);
+
+                    assert.calledOnceWithExactly(browser.performActions, [{
+                        type: 'pointer',
+                        id: 'some-pointer-id',
+                        parameters: {pointerType: 'mouse'},
+                        actions: [{type: 'pointerMove', duration: 0, x: 1, y: 1}]
+                    }]);
+                });
+
+                it('should not scroll into view of the element', async () => {
+                    addMoveToObject(browser);
+
+                    await browser.moveToObject('.some-selector');
+
+                    assert.notCalled(element.scrollIntoView);
+                });
             });
 
-            it('should move to the passed offset coords', async () => {
-                getPerformActionId.withArgs(browser).returns('some-pointer-id');
-                addMoveToObject(browser);
+            describe('element is outside of the viewport', () => {
+                let element;
 
-                await browser.moveToObject('.some-selector', 1, 1);
+                beforeEach(() => {
+                    element = mkElement_({id: 100500});
+                    browser.getElementRect.withArgs(100500).resolves({x: 10, y: 10, width: 10, height: 10});
+                    browser.execute
+                        .onFirstCall().resolves({x: 0, y: 0, width: 10, height: 10})
+                        .onSecondCall().resolves({x: 10, y: 10, width: 10, height: 10});
+                    findElement.withArgs(browser, '.some-selector').resolves(element);
+                });
 
-                assert.calledOnceWithExactly(browser.performActions, [{
-                    type: 'pointer',
-                    id: 'some-pointer-id',
-                    parameters: {pointerType: 'mouse'},
-                    actions: [{type: 'pointerMove', duration: 0, x: 1, y: 1}]
-                }]);
+                it('should scroll into view of the element', async () => {
+                    addMoveToObject(browser);
+
+                    await browser.moveToObject('.some-selector');
+
+                    assert.calledOnceWithExactly(element.scrollIntoView);
+                });
+
+                it('should move to the center of the element if offset coords is not passed', async () => {
+                    getPerformActionId.withArgs(browser).returns('some-pointer-id');
+                    addMoveToObject(browser);
+
+                    await browser.moveToObject('.some-selector');
+
+                    assert.calledOnceWithExactly(browser.performActions, [{
+                        type: 'pointer',
+                        id: 'some-pointer-id',
+                        parameters: {pointerType: 'mouse'},
+                        actions: [{type: 'pointerMove', duration: 0, x: 5, y: 5}]
+                    }]);
+                });
+
+                it('should move to the passed offset coords', async () => {
+                    getPerformActionId.withArgs(browser).returns('some-pointer-id');
+                    addMoveToObject(browser);
+
+                    await browser.moveToObject('.some-selector', 1, 1);
+
+                    assert.calledOnceWithExactly(browser.performActions, [{
+                        type: 'pointer',
+                        id: 'some-pointer-id',
+                        parameters: {pointerType: 'mouse'},
+                        actions: [{type: 'pointerMove', duration: 0, x: 1, y: 1}]
+                    }]);
+                });
             });
         });
     });

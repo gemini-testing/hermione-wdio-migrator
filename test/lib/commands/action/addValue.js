@@ -4,13 +4,13 @@ const proxyquire = require('proxyquire');
 const {mkBrowser_, mkElement_} = require('../../../utils');
 
 describe('"addValue" command', () => {
-    let browser, findElements, addAddValue;
+    let browser, findElement, addAddValue;
 
     beforeEach(() => {
         browser = mkBrowser_();
-        findElements = sinon.stub().resolves([mkElement_()]);
+        findElement = sinon.stub().resolves(mkElement_());
         addAddValue = proxyquire('lib/commands/action/addValue', {
-            '../../helpers/findElements': findElements
+            '../../helpers/findElement': findElement
         });
     });
 
@@ -22,25 +22,21 @@ describe('"addValue" command', () => {
         assert.calledOnceWithExactly(browser.addCommand, 'addValue', sinon.match.func);
     });
 
-    it('should get elements by passed selector', async () => {
+    it('should get element by passed selector', async () => {
         addAddValue(browser);
 
         await browser.addValue('.some-selector', 'text');
 
-        assert.calledOnceWithExactly(findElements, browser, '.some-selector');
+        assert.calledOnceWithExactly(findElement, browser, '.some-selector');
     });
 
-    it('should call "addValue" on each browser element', async () => {
-        const browser = mkBrowser_();
-        const element1 = mkElement_();
-        const element2 = mkElement_();
-
-        findElements.withArgs(browser, '.some-selector').resolves([element1, element2]);
+    it('should call "addValue" on found browser element', async () => {
+        const element = mkElement_();
+        findElement.withArgs(browser, '.some-selector').resolves(element);
         addAddValue(browser);
 
         await browser.addValue('.some-selector', 'text');
 
-        assert.calledWithExactly(element1.addValue, 'text');
-        assert.calledWithExactly(element2.addValue, 'text');
+        assert.calledOnceWithExactly(element.addValue, 'text');
     });
 });
