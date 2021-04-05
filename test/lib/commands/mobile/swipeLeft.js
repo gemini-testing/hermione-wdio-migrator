@@ -24,22 +24,22 @@ describe('"swipeLeft" command', () => {
 
         await browser.swipeLeft('.some-selector');
 
-        assert.calledOnceWithExactly(browser.swipe, '.some-selector', DEFAULT_OFFSET, 0, DEFAULT_SPEED);
+        assert.calledOnceWithExactly(browser.swipe, '.some-selector', -DEFAULT_OFFSET, 0, DEFAULT_SPEED);
     });
 
-    it('should transform passed "xOffset" param to positive value', async () => {
+    it('should transform passed "xOffset" param to negative value', async () => {
         addSwipeLeft(browser);
 
-        await browser.swipeLeft('.some-selector', -100);
+        await browser.swipeLeft('.some-selector', 100);
 
-        assert.calledOnceWithExactly(browser.swipe, '.some-selector', 100, 0, sinon.match.number);
+        assert.calledOnceWithExactly(browser.swipe, '.some-selector', -100, 0, sinon.match.number);
     });
 
     it('should call "swipe" with all passed args', async () => {
         addSwipeLeft(browser);
 
-        await browser.swipeLeft('.some-selector', 200, 300);
+        await browser.swipeLeft('.some-selector', -200, 300);
 
-        assert.calledOnceWithExactly(browser.swipe, '.some-selector', 200, 0, 300);
+        assert.calledOnceWithExactly(browser.swipe, '.some-selector', -200, 0, 300);
     });
 });

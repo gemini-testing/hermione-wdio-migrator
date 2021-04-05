@@ -22,9 +22,10 @@ describe('"scroll" command', () => {
         assert.calledOnceWithExactly(browser.addCommand, 'scroll', sinon.match.func);
     });
 
-    describe('exec in mobile', () => {
+    describe('exec in mobile without w3c support', () => {
         beforeEach(() => {
             browser.isMobile = true;
+            browser.isW3C = false;
         });
 
         it('should scroll only by coordinates if selector is not passed', async () => {
@@ -67,66 +68,85 @@ describe('"scroll" command', () => {
         });
     });
 
-    describe('exec in not mobile', () => {
-        beforeEach(() => {
-            browser.isMobile = false;
-            global.window = {
-                scrollTo: sinon.stub()
-            };
+    [
+        {
+            name: 'exec in mobile with w3c support',
+            isMobile: true,
+            isW3C: true
+        },
+        {
+            name: 'exec in desktop without w3c support',
+            isMobile: false,
+            isW3C: false
+        },
+        {
+            name: 'exec in desktop with w3c support',
+            isMobile: false,
+            isW3C: true
+        }
+    ].forEach(({name, isMobile, isW3C}) => {
+        describe(name, () => {
+            beforeEach(() => {
+                browser.isMobile = isMobile;
+                browser.isW3C = isW3C;
+                global.window = {
+                    scrollTo: sinon.stub()
+                };
 
-            browser.execute.callsFake((handler, ...args) => handler(...args));
-        });
+                browser.execute.callsFake((handler, ...args) => handler(...args));
+            });
 
-        afterEach(() => {
-            global.window = undefined;
-        });
+            afterEach(() => {
+                global.window = undefined;
+            });
 
-        it('should scroll only by coordinates if selector is not passed', async () => {
-            addScroll(browser);
+            it('should scroll only by coordinates if selector is not passed', async () => {
+                addScroll(browser);
 
-            await browser.scroll(100, 200);
+                await browser.scroll(100, 200);
 
-            assert.notCalled(findElement);
-            assert.calledOnceWithExactly(browser.execute, sinon.match.func, 100, 200);
-            assert.calledOnceWithExactly(global.window.scrollTo, 100, 200);
-        });
+                assert.notCalled(findElement);
+                assert.calledOnceWithExactly(browser.execute, sinon.match.func, 100, 200);
+                assert.calledOnceWithExactly(global.window.scrollTo, 100, 200);
+            });
 
-        it('should get element by passed selector', async () => {
-            const element = mkElement_({id: 123});
-            element.getLocation.resolves({x: 100, y: 200});
+            it('should get element by passed selector', async () => {
+                const element = mkElement_({id: 123});
+                element.getLocation.resolves({x: 100, y: 200});
 
-            findElement.withArgs(browser, '.some-selector').resolves(element);
-            addScroll(browser);
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addScroll(browser);
 
-            await browser.scroll('.some-selector');
+                await browser.scroll('.some-selector');
 
-            assert.calledOnceWithExactly(findElement, browser, '.some-selector');
-        });
+                assert.calledOnceWithExactly(findElement, browser, '.some-selector');
+            });
 
-        it('should scroll by default coordinates relative to location of found element', async () => {
-            const element = mkElement_({id: 123});
-            element.getLocation.resolves({x: 100, y: 200});
+            it('should scroll by default coordinates relative to location of found element', async () => {
+                const element = mkElement_({id: 123});
+                element.getLocation.resolves({x: 100, y: 200});
 
-            findElement.withArgs(browser, '.some-selector').resolves(element);
-            addScroll(browser);
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addScroll(browser);
 
-            await browser.scroll('.some-selector');
+                await browser.scroll('.some-selector');
 
-            assert.calledOnceWithExactly(browser.execute, sinon.match.func, 100, 200);
-            assert.calledOnceWithExactly(global.window.scrollTo, 100, 200);
-        });
+                assert.calledOnceWithExactly(browser.execute, sinon.match.func, 100, 200);
+                assert.calledOnceWithExactly(global.window.scrollTo, 100, 200);
+            });
 
-        it('should scroll by passed coordinates relative to location of found element', async () => {
-            const element = mkElement_({id: 123});
-            element.getLocation.resolves({x: 100, y: 200});
+            it('should scroll by passed coordinates relative to location of found element', async () => {
+                const element = mkElement_({id: 123});
+                element.getLocation.resolves({x: 100, y: 200});
 
-            findElement.withArgs(browser, '.some-selector').resolves(element);
-            addScroll(browser);
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addScroll(browser);
 
-            await browser.scroll('.some-selector', 10, 20);
+                await browser.scroll('.some-selector', 10, 20);
 
-            assert.calledOnceWithExactly(browser.execute, sinon.match.func, 110, 220);
-            assert.calledOnceWithExactly(global.window.scrollTo, 110, 220);
+                assert.calledOnceWithExactly(browser.execute, sinon.match.func, 110, 220);
+                assert.calledOnceWithExactly(global.window.scrollTo, 110, 220);
+            });
         });
     });
 });
