@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.8](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.7...v0.1.8) (2021-04-05)
+
+
+### Bug Fixes
+
+* errors in commands ([d999f45](https://github.com/gemini-testing/hermione-wdio-migrator/commit/d999f45d8cfc12357916a06d36ebd04fb83aecc4))
+
 ### [0.1.7](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.6...v0.1.7) (2021-03-31)
 
 
