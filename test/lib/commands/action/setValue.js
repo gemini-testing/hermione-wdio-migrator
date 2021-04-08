@@ -30,13 +30,50 @@ describe('"setValue" command', () => {
         assert.calledOnceWithExactly(findElement, browser, '.some-selector');
     });
 
-    it('should call "setValue" on found browser element', async () => {
-        const element = mkElement_();
-        findElement.withArgs(browser, '.some-selector').resolves(element);
-        addSetValue(browser);
+    describe('should call "setValue" on found browser element for', () => {
+        [
+            {name: 'not ios', isW3C: false, isIOS: false},
+            {name: 'ios with w3c support', isW3C: true, isIOS: true}
+        ].forEach(({name, isW3C, isIOS}) => {
+            it(name, async () => {
+                browser.isW3C = isW3C;
+                browser.isIOS = isIOS;
+                const element = mkElement_();
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addSetValue(browser);
 
-        await browser.setValue('.some-selector', 'text');
+                await browser.setValue('.some-selector', 'text');
 
-        assert.calledOnceWithExactly(element.setValue, 'text');
+                assert.calledOnceWithExactly(element.setValue, 'text');
+            });
+        });
+    });
+
+    describe('for ios with jwp support', () => {
+        beforeEach(() => {
+            browser.isW3C = false;
+            browser.isIOS = true;
+        });
+
+        it('should clear value before send keys', async () => {
+            const element = mkElement_();
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            addSetValue(browser);
+
+            await browser.setValue('.some-selector', 'text');
+
+            assert.calledOnceWithExactly(element.clearValue);
+            assert.callOrder(element.clearValue, browser.elementSendKeys);
+        });
+
+        it('should send keys with correct args', async () => {
+            const element = mkElement_({id: '100500'});
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            addSetValue(browser);
+
+            await browser.setValue('.some-selector', 'text');
+
+            assert.calledOnceWithExactly(browser.elementSendKeys, '100500', 'text');
+        });
     });
 });
