@@ -30,13 +30,39 @@ describe('"addValue" command', () => {
         assert.calledOnceWithExactly(findElement, browser, '.some-selector');
     });
 
-    it('should call "addValue" on found browser element', async () => {
-        const element = mkElement_();
-        findElement.withArgs(browser, '.some-selector').resolves(element);
-        addAddValue(browser);
+    describe('should call "addValue" on found browser element for', () => {
+        [
+            {name: 'not ios', isW3C: false, isIOS: false},
+            {name: 'ios with w3c support', isW3C: true, isIOS: true}
+        ].forEach(({name, isW3C, isIOS}) => {
+            it(name, async () => {
+                browser.isW3C = isW3C;
+                browser.isIOS = isIOS;
+                const element = mkElement_();
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addAddValue(browser);
 
-        await browser.addValue('.some-selector', 'text');
+                await browser.addValue('.some-selector', 'text');
 
-        assert.calledOnceWithExactly(element.addValue, 'text');
+                assert.calledOnceWithExactly(element.addValue, 'text');
+            });
+        });
+    });
+
+    describe('for ios with jwp support', () => {
+        beforeEach(() => {
+            browser.isW3C = false;
+            browser.isIOS = true;
+        });
+
+        it('should send keys with correct args', async () => {
+            const element = mkElement_({id: '100500'});
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            addAddValue(browser);
+
+            await browser.addValue('.some-selector', 'text');
+
+            assert.calledOnceWithExactly(browser.elementSendKeys, '100500', 'text');
+        });
     });
 });
