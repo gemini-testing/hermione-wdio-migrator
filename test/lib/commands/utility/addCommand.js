@@ -49,9 +49,25 @@ describe('"addCommand" command', () => {
             assert.calledOnceWithExactly(origAddCommand, 'someCommand', cb);
             assert.notCalled(browser.overwriteCommand);
         });
+
+        [
+            {name: 'not exists', cmdValue: undefined},
+            {name: 'not a function', cmdValue: 'some-value'}
+        ].forEach(({name, cmdValue}) => {
+            it(`"true" but passed command is ${name}`, () => {
+                browser.someCommand = cmdValue;
+                overwriteAddCommand(browser);
+
+                browser.addCommand('someCommand', cb, true);
+
+                assert.calledOnceWithExactly(origAddCommand, 'someCommand', cb);
+                assert.notCalled(browser.overwriteCommand);
+            });
+        });
     });
 
-    it('should overwrite passed command if "overwrite" option is "true"', () => {
+    it('should overwrite passed command if "overwrite" option is "true" and command exists', () => {
+        browser.someCommand = () => {};
         overwriteAddCommand(browser);
 
         browser.addCommand('someCommand', () => {}, true);
@@ -61,6 +77,7 @@ describe('"addCommand" command', () => {
 
     it('should call overwritten command with correct args', () => {
         const cb = sinon.spy();
+        browser.someCommand = () => {};
         overwriteAddCommand(browser);
 
         browser.addCommand('someCommand', cb, true);
@@ -71,6 +88,7 @@ describe('"addCommand" command', () => {
 
     it('should call callback of overwritten command with browser context', () => {
         const cb = sinon.spy();
+        browser.someCommand = () => {};
         overwriteAddCommand(browser);
 
         browser.addCommand('someCommand', cb, true);
