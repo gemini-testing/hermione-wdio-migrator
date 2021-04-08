@@ -135,6 +135,8 @@ exports.mkBrowser_ = () => {
     session.newWindow = sinon.stub().named('newWindow').resolves();
     session.pressKeyCode = sinon.stub().named('pressKeyCode').resolves();
     session.longPressKeyCode = sinon.stub().named('longPressKeyCode').resolves();
+    session.keys = sinon.stub().named('keys').resolves();
+    session.sendKeys = sinon.stub().named('sendKeys').resolves();
 
     return session;
 };
