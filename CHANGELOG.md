@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.10](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.9...v0.1.10) (2021-04-12)
+
+
+### Bug Fixes
+
+* remove unnecessary "keys" wrapper with hack for android ([a6e2012](https://github.com/gemini-testing/hermione-wdio-migrator/commit/a6e20124334969739a48b37bec47f95217ba8f38))
+* **addValue,setValue for android:** add hack with call "elementSendKeys" ([7f04021](https://github.com/gemini-testing/hermione-wdio-migrator/commit/7f04021a526e714392574af6a0273dee08f30fa4))
+
 ### [0.1.9](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.8...v0.1.9) (2021-04-08)
 
 
