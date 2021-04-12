@@ -32,12 +32,12 @@ describe('"addValue" command', () => {
 
     describe('should call "addValue" on found browser element for', () => {
         [
-            {name: 'not ios', isW3C: false, isIOS: false},
-            {name: 'ios with w3c support', isW3C: true, isIOS: true}
-        ].forEach(({name, isW3C, isIOS}) => {
+            {name: 'not mobile', isW3C: false, isMobile: false},
+            {name: 'mobile with w3c support', isW3C: true, isMobile: true}
+        ].forEach(({name, isW3C, isMobile}) => {
             it(name, async () => {
                 browser.isW3C = isW3C;
-                browser.isIOS = isIOS;
+                browser.isMobile = isMobile;
                 const element = mkElement_();
                 findElement.withArgs(browser, '.some-selector').resolves(element);
                 addAddValue(browser);
@@ -49,10 +49,10 @@ describe('"addValue" command', () => {
         });
     });
 
-    describe('for ios with jwp support', () => {
+    describe('for mobile with jwp support', () => {
         beforeEach(() => {
             browser.isW3C = false;
-            browser.isIOS = true;
+            browser.isMobile = true;
         });
 
         it('should send keys with correct args', async () => {
