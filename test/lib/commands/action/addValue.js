@@ -55,14 +55,26 @@ describe('"addValue" command', () => {
             browser.isMobile = true;
         });
 
-        it('should send keys with correct args', async () => {
-            const element = mkElement_({id: '100500'});
-            findElement.withArgs(browser, '.some-selector').resolves(element);
-            addAddValue(browser);
+        describe('should send keys with element id and passed value', () => {
+            it('as string', async () => {
+                const element = mkElement_({id: '100500'});
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addAddValue(browser);
 
-            await browser.addValue('.some-selector', 'text');
+                await browser.addValue('.some-selector', 'text');
 
-            assert.calledOnceWithExactly(browser.elementSendKeys, '100500', 'text');
+                assert.calledOnceWithExactly(browser.elementSendKeys, '100500', 'text');
+            });
+
+            it('as array modified to string', async () => {
+                const element = mkElement_({id: '100500'});
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addAddValue(browser);
+
+                await browser.addValue('.some-selector', ['text1', 'text2']);
+
+                assert.calledOnceWithExactly(browser.elementSendKeys, '100500', 'text1text2');
+            });
         });
     });
 });
