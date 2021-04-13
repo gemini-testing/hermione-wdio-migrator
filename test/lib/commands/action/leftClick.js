@@ -30,15 +30,66 @@ describe('"leftClick" command', () => {
         assert.calledOnceWithExactly(findElement, browser, '.some-selector');
     });
 
-    it('should call "click" on browser element with correct options', async () => {
-        const browser = mkBrowser_();
-        const element = mkElement_();
+    [
+        {
+            name: 'exec in ios with w3c support',
+            isIOS: true,
+            isW3C: true
+        },
+        {
+            name: 'exec not in ios with w3c support',
+            isIOS: false,
+            isW3C: true
+        },
+        {
+            name: 'exec not in ios without w3c support',
+            isIOS: false,
+            isW3C: false
+        }
+    ].forEach(({name, isIOS, isW3C}) => {
+        describe(name, () => {
+            it('should call "click" on browser element with correct options', async () => {
+                browser.isIOS = isIOS;
+                browser.isW3C = isW3C;
+                const element = mkElement_();
 
-        findElement.withArgs(browser, '.some-selector').resolves(element);
-        addLeftClick(browser);
+                findElement.withArgs(browser, '.some-selector').resolves(element);
+                addLeftClick(browser);
 
-        await browser.leftClick('.some-selector', 100, 200);
+                await browser.leftClick('.some-selector', 100, 200);
 
-        assert.calledOnceWithExactly(element.click, {button: 'left', x: 100, y: 200});
+                assert.calledOnceWithExactly(element.click, {button: 'left', x: 100, y: 200});
+            });
+        });
+    });
+
+    describe('exec in ios without w3c support', () => {
+        beforeEach(() => {
+            browser.isIOS = true;
+            browser.isW3C = false;
+        });
+
+        it('should call "moveTo" on browser element with passed offsets', async () => {
+            const element = mkElement_();
+
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            addLeftClick(browser);
+
+            await browser.leftClick('.some-selector', 100, 200);
+
+            assert.calledOnceWithExactly(element.moveTo, {xOffset: 100, yOffset: 200});
+        });
+
+        it('should call "click" on browser element after move to it', async () => {
+            const element = mkElement_();
+
+            findElement.withArgs(browser, '.some-selector').resolves(element);
+            addLeftClick(browser);
+
+            await browser.leftClick('.some-selector', 100, 200);
+
+            assert.callOrder(element.moveTo, element.click);
+            assert.calledOnceWithExactly(element.click);
+        });
     });
 });

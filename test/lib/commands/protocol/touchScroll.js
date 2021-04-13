@@ -24,14 +24,14 @@ describe('"touchScroll" command', () => {
         assert.calledOnceWithExactly(overwriteExistingCommand, browser, 'touchScroll', sinon.match.func);
     });
 
-    describe('should call original "touchScroll" with', () => {
+    describe('should call original "touchScroll"', () => {
         let origTouchScroll;
 
         beforeEach(() => {
             origTouchScroll = browser.touchScroll;
         });
 
-        it('default "xOffset" and "yOffset"', async () => {
+        it('with default "xOffset" and "yOffset"', async () => {
             overwriteTouchScroll(browser);
 
             await browser.touchScroll('element-id');
@@ -39,7 +39,7 @@ describe('"touchScroll" command', () => {
             assert.calledOnceWithExactly(origTouchScroll, 0, 0, 'element-id');
         });
 
-        it('args passed in old sequence', async () => {
+        it('with args passed in old sequence', async () => {
             overwriteTouchScroll(browser);
 
             await browser.touchScroll('element-id', 100, 200);
@@ -47,12 +47,22 @@ describe('"touchScroll" command', () => {
             assert.calledOnceWithExactly(origTouchScroll, 100, 200, 'element-id');
         });
 
-        it('args passed in new sequence', async () => {
-            overwriteTouchScroll(browser);
+        describe('in wdio latest sequence', () => {
+            it('only with passed offsets', async () => {
+                overwriteTouchScroll(browser);
 
-            await browser.touchScroll(100, 200, 'element-id');
+                await browser.touchScroll(100, 200);
 
-            assert.calledOnceWithExactly(origTouchScroll, 100, 200, 'element-id');
+                assert.calledOnceWithExactly(origTouchScroll, 100, 200);
+            });
+
+            it('with passed offsets and element id', async () => {
+                overwriteTouchScroll(browser);
+
+                await browser.touchScroll(100, 200, 'element-id');
+
+                assert.calledOnceWithExactly(origTouchScroll, 100, 200, 'element-id');
+            });
         });
     });
 });

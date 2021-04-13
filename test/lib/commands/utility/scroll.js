@@ -22,10 +22,11 @@ describe('"scroll" command', () => {
         assert.calledOnceWithExactly(browser.addCommand, 'scroll', sinon.match.func);
     });
 
-    describe('exec in mobile without w3c support', () => {
+    describe('exec in android without w3c support', () => {
         beforeEach(() => {
             browser.isMobile = true;
             browser.isW3C = false;
+            browser.isIOS = false;
         });
 
         it('should scroll only by coordinates if selector is not passed', async () => {
@@ -70,25 +71,41 @@ describe('"scroll" command', () => {
 
     [
         {
-            name: 'exec in mobile with w3c support',
+            name: 'exec in ios without w3c support',
             isMobile: true,
-            isW3C: true
+            isW3C: false,
+            isIOS: true
+        },
+        {
+            name: 'exec in ios with w3c support',
+            isMobile: true,
+            isW3C: true,
+            isIOS: true
+        },
+        {
+            name: 'exec in android with w3c support',
+            isMobile: true,
+            isW3C: true,
+            isIOS: false
         },
         {
             name: 'exec in desktop without w3c support',
             isMobile: false,
-            isW3C: false
+            isW3C: false,
+            isIOS: false
         },
         {
             name: 'exec in desktop with w3c support',
             isMobile: false,
-            isW3C: true
+            isW3C: true,
+            isIOS: false
         }
-    ].forEach(({name, isMobile, isW3C}) => {
+    ].forEach(({name, isMobile, isW3C, isIOS}) => {
         describe(name, () => {
             beforeEach(() => {
                 browser.isMobile = isMobile;
                 browser.isW3C = isW3C;
+                browser.isIOS = isIOS;
                 global.window = {
                     scrollTo: sinon.stub()
                 };
