@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.11](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.10...v0.1.11) (2021-04-13)
+
+
+### Bug Fixes
+
+* "addValue", "setValue", "leftClick", "scroll", "touchScroll" ([9ab6b0c](https://github.com/gemini-testing/hermione-wdio-migrator/commit/9ab6b0c8266fb9e064e45dddf948fa0d5f52ac38))
+
 ### [0.1.10](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.9...v0.1.10) (2021-04-12)
 
 
