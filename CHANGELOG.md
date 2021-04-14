@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.12](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.11...v0.1.12) (2021-04-14)
+
+
+### Bug Fixes
+
+* **leftClick:** for all mobile browsers ([476b327](https://github.com/gemini-testing/hermione-wdio-migrator/commit/476b327b0a09cd2bce1b7aac4c77026e1882e08e))
+
 ### [0.1.11](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.10...v0.1.11) (2021-04-13)
 
 
