@@ -32,24 +32,24 @@ describe('"leftClick" command', () => {
 
     [
         {
-            name: 'exec in ios with w3c support',
-            isIOS: true,
+            name: 'exec in mobile with w3c support',
+            isMobile: true,
             isW3C: true
         },
         {
-            name: 'exec not in ios with w3c support',
-            isIOS: false,
+            name: 'exec not in mobile with w3c support',
+            isMobile: false,
             isW3C: true
         },
         {
-            name: 'exec not in ios without w3c support',
-            isIOS: false,
+            name: 'exec not in mobile without w3c support',
+            isMobile: false,
             isW3C: false
         }
-    ].forEach(({name, isIOS, isW3C}) => {
+    ].forEach(({name, isMobile, isW3C}) => {
         describe(name, () => {
             it('should call "click" on browser element with correct options', async () => {
-                browser.isIOS = isIOS;
+                browser.isMobile = isMobile;
                 browser.isW3C = isW3C;
                 const element = mkElement_();
 
@@ -63,9 +63,9 @@ describe('"leftClick" command', () => {
         });
     });
 
-    describe('exec in ios without w3c support', () => {
+    describe('exec in mobile without w3c support', () => {
         beforeEach(() => {
-            browser.isIOS = true;
+            browser.isMobile = true;
             browser.isW3C = false;
         });
 
