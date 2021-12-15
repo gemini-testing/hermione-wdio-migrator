@@ -30,7 +30,7 @@ describe('"getHTML" command', () => {
         assert.calledOnceWithExactly(findElement, browser, '.some-selector');
     });
 
-    it('should call "getHTML" on browser element with passed selector', async () => {
+    it('should call "getHTML" on browser element with passed arguments', async () => {
         const browser = mkBrowser_();
         const element = mkElement_();
 
@@ -39,6 +39,18 @@ describe('"getHTML" command', () => {
 
         await browser.getHTML('.some-selector');
 
-        assert.calledOnceWithExactly(element.getHTML);
+        assert.calledOnceWithExactly(element.getHTML, true);
+    });
+
+    it('should call "getHTML" on browser element with passed includeSelectorTag option', async () => {
+        const browser = mkBrowser_();
+        const element = mkElement_();
+
+        findElement.withArgs(browser, '.some-selector').resolves(element);
+        addGetHTML(browser);
+
+        await browser.getHTML('.some-selector', false);
+
+        assert.calledOnceWithExactly(element.getHTML, false);
     });
 });
