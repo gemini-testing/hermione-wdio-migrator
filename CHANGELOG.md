@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.13](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.12...v0.1.13) (2021-12-16)
+
+
+### Bug Fixes
+
+* **getHTML:** missing an includeSelectorTag option fo element command ([a945bd5](https://github.com/gemini-testing/hermione-wdio-migrator/commit/a945bd5f1d3c5c267467918b82e681364a31debb))
+
 ### [0.1.12](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.11...v0.1.12) (2021-04-14)
 
 
