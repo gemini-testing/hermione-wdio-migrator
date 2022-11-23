@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.15](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.14...v0.1.15) (2022-11-23)
+
+
+### Bug Fixes
+
+* use default timeout value from hermione config ([92fb511](https://github.com/gemini-testing/hermione-wdio-migrator/commit/92fb51183adfd5e1409c1efe18ddcd5b1142e929))
+
 ### [0.1.13](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.12...v0.1.13) (2021-12-16)
 
 
