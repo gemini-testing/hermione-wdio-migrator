@@ -6,6 +6,9 @@ exports.mkBrowser_ = () => {
     session.commandList = [];
     session.isW3C = false;
     session.isMobile = false;
+    session.options = {
+        waitforTimeout: 100500
+    };
 
     session.addCommand = sinon.stub().callsFake((name, command) => {
         session[name] = command;

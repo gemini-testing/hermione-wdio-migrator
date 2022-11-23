@@ -34,6 +34,18 @@ describe('"waitForSelected" command', () => {
         );
     });
 
+    it('should get default timeout from browser options', async () => {
+        addWaitForSelected(browser);
+
+        await browser.waitForSelected('.some-selector');
+
+        assert.calledOnceWithMatch(
+            browser.waitUntil,
+            sinon.match.func,
+            {timeout: browser.options.waitforTimeout}
+        );
+    });
+
     it('should get elements by passed selector', async () => {
         findElements.withArgs(browser, '.some-selector').resolves([]);
         addWaitForSelected(browser);
