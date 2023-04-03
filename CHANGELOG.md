@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.16](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.15...v0.1.16) (2023-04-03)
+
+
+### Bug Fixes
+
+* support "id" field from test for hermione@7 ([ca5d552](https://github.com/gemini-testing/hermione-wdio-migrator/commit/ca5d552188de9ad355e14bd5cf643159a6cdfc7f))
+
 ### [0.1.15](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.14...v0.1.15) (2022-11-23)
 
 
