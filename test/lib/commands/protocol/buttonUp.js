@@ -39,7 +39,27 @@ describe('"buttonUp" command', () => {
         });
     });
 
-    it('should add "buttondDown" command', () => {
+    describe('should not overwrite "buttonUp" command', () => {
+        it('if browser does not support w3c protocol', () => {
+            browser.isW3C = false;
+            browser.buttonUp = sinon.stub().named('buttonUp').resolves();
+
+            addButtonUp(browser);
+
+            assert.notCalled(browser.overwriteCommand);
+        });
+
+        it('if browser doesn\'t have command', () => {
+            browser.isW3C = true;
+            browser.buttonUp = null;
+
+            addButtonUp(browser);
+
+            assert.notCalled(browser.overwriteCommand);
+        });
+    });
+
+    it('should add "buttonUp" command if browser doesn\'t have it', () => {
         browser.isW3C = true;
         browser.buttonUp = undefined;
 
@@ -48,23 +68,36 @@ describe('"buttonUp" command', () => {
         assert.calledOnceWithExactly(browser.addCommand, 'buttonUp', sinon.match.func);
     });
 
-    it('should call "buttonUp" with correct args', async () => {
+    it('should overwrite "buttonUp" command if browser already has it', () => {
         browser.isW3C = true;
-        browser.buttonUp = undefined;
-        getMouseButtonNameNumber.withArgs('left').returns(0);
-        getPerformActionId.withArgs(browser).returns('some-pointer-id');
+        browser.buttonUp = () => {};
 
         addButtonUp(browser);
 
-        await browser.buttonUp('left');
-
-        assert.calledOnceWithExactly(browser.performActions, [{
-            type: 'pointer',
-            id: 'some-pointer-id',
-            parameters: {pointerType: 'mouse'},
-            actions: [
-                {type: 'pointerUp', button: 0}
-            ]
-        }]);
+        assert.calledOnceWithExactly(browser.overwriteCommand, 'buttonUp', sinon.match.func);
     });
+
+    for (const isCommandSet of [true, false]) {
+        describe(`if command is ${isCommandSet ? '' : 'not '}set`, () => {
+            it('should call "buttonUp" with correct args', async () => {
+                browser.isW3C = true;
+                browser.buttonUp = undefined;
+                getMouseButtonNameNumber.withArgs('left').returns(0);
+                getPerformActionId.withArgs(browser).returns('some-pointer-id');
+
+                addButtonUp(browser);
+
+                await browser.buttonUp('left');
+
+                assert.calledOnceWithExactly(browser.performActions, [{
+                    type: 'pointer',
+                    id: 'some-pointer-id',
+                    parameters: {pointerType: 'mouse'},
+                    actions: [
+                        {type: 'pointerUp', button: 0}
+                    ]
+                }]);
+            });
+        });
+    }
 });

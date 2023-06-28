@@ -39,7 +39,27 @@ describe('"buttonDown" command', () => {
         });
     });
 
-    it('should add "buttondDown" command', () => {
+    describe('should not overwrite "buttondDown" command', () => {
+        it('if browser does not support w3c protocol', () => {
+            browser.isW3C = false;
+            browser.buttonDown = undefined;
+
+            addButtonDown(browser);
+
+            assert.notCalled(browser.overwriteCommand);
+        });
+
+        it('if browser doesn\'t have command', () => {
+            browser.isW3C = true;
+            browser.buttonDown = null;
+
+            addButtonDown(browser);
+
+            assert.notCalled(browser.overwriteCommand);
+        });
+    });
+
+    it('should add "buttondDown" command if browser doesn\'t have it', () => {
         browser.isW3C = true;
         browser.buttonDown = undefined;
 
@@ -48,23 +68,36 @@ describe('"buttonDown" command', () => {
         assert.calledOnceWithExactly(browser.addCommand, 'buttonDown', sinon.match.func);
     });
 
-    it('should call "buttonDown" with correct args', async () => {
+    it('should overwrite "buttondDown" command if browser already has it', () => {
         browser.isW3C = true;
-        browser.buttonDown = undefined;
-        getMouseButtonNameNumber.withArgs('left').returns(0);
-        getPerformActionId.withArgs(browser).returns('some-pointer-id');
+        browser.buttonDown = () => {};
 
         addButtonDown(browser);
 
-        await browser.buttonDown('left');
-
-        assert.calledOnceWithExactly(browser.performActions, [{
-            type: 'pointer',
-            id: 'some-pointer-id',
-            parameters: {pointerType: 'mouse'},
-            actions: [
-                {type: 'pointerDown', button: 0}
-            ]
-        }]);
+        assert.calledOnceWithExactly(browser.overwriteCommand, 'buttonDown', sinon.match.func);
     });
+
+    for (const isCommandSet of [true, false]) {
+        describe(`if command is ${isCommandSet ? '' : 'not '}set`, () => {
+            it('should call "buttonDown" with correct args', async () => {
+                browser.isW3C = true;
+                browser.buttonDown = isCommandSet ? () => {} : undefined;
+                getMouseButtonNameNumber.withArgs('left').returns(0);
+                getPerformActionId.withArgs(browser).returns('some-pointer-id');
+
+                addButtonDown(browser);
+
+                await browser.buttonDown('left');
+
+                assert.calledOnceWithExactly(browser.performActions, [{
+                    type: 'pointer',
+                    id: 'some-pointer-id',
+                    parameters: {pointerType: 'mouse'},
+                    actions: [
+                        {type: 'pointerDown', button: 0}
+                    ]
+                }]);
+            });
+        });
+    }
 });
