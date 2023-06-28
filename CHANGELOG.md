@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.17](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.16...v0.1.17) (2023-06-28)
+
+
+### Features
+
+* provide w3c implementations for swipe and touch commands ([42d6e70](https://github.com/gemini-testing/hermione-wdio-migrator/commit/42d6e707217057871928519e1e46007762031d19))
+
+
+### Bug Fixes
+
+* overwrite w3c button up/down command on mobiles ([ec63ae3](https://github.com/gemini-testing/hermione-wdio-migrator/commit/ec63ae302fd6f1a6a2f1867a4b112ed3e5fb4ad8))
+
 ### [0.1.16](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.15...v0.1.16) (2023-04-03)
 
 
