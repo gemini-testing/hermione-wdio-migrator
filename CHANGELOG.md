@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.17...v1.0.0) (2024-03-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* nodejs versions less than 12.0.0 are no longer supported
+
+### Bug Fixes
+
+* add missing lodash to deps ([032fd1a](https://github.com/gemini-testing/hermione-wdio-migrator/commit/032fd1a77ebe731762bd74e962a22ef0f23a18eb))
+
+
+* add CI for unit test ([f17c4b1](https://github.com/gemini-testing/hermione-wdio-migrator/commit/f17c4b10f389ae59003c149d7f149c6342d7c72b))
+
 ### [0.1.17](https://github.com/gemini-testing/hermione-wdio-migrator/compare/v0.1.16...v0.1.17) (2023-06-28)
 
 
